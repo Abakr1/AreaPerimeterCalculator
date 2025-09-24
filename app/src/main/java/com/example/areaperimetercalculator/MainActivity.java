@@ -42,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
     TextView tv_j_areaPerimeterCircle;
     ConstraintLayout cont_j_circleView;
 
+    //for triangle container
+    EditText et_j_base;
+    EditText et_j_height;
+    EditText et_j_sideA;
+    EditText et_j_sideB;
+    EditText et_j_sideC;
+    TextView tv_j_AreaPerimeterTriangle;
+    ConstraintLayout cont_j_triangleView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +77,14 @@ public class MainActivity extends AppCompatActivity {
         tv_j_areaPerimeterCircle = findViewById(R.id.tv_v_computedAreaPerimeterCircle);
         cont_j_circleView = findViewById(R.id.cont_v_circle);
 
+        //Triangle
+        et_j_base   = findViewById(R.id.et_v_base);
+        et_j_height = findViewById(R.id.et_v_height);
+        et_j_sideA  = findViewById(R.id.et_v_sideA);
+        et_j_sideB  = findViewById(R.id.et_v_sideB);
+        et_j_sideC  = findViewById(R.id.et_v_sideC);
+        tv_j_AreaPerimeterTriangle = findViewById(R.id.tv_v_computedAreaPerimeterTriangle);
+        cont_j_triangleView = findViewById(R.id.cont_v_triangle);
 
         //Because we are making a simple drop down menu (spinner) that will only contain
         //strings as options.  We can use a string array with the built-in array adapter
@@ -83,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         setupSpinnerChangeListener();
         textChangeListenerSquareRect();
         textChangeListenerRadius();
+        //for triangle
+        textChangeListenerTriangle();
     }
 
     public void setupSpinnerChangeListener()
@@ -105,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //no showing for circle and triangle
                     hideConstraintView(cont_j_circleView);
+                    hideConstraintView(cont_j_triangleView);
                 }
                 else if(position == 2)
                 {
@@ -113,10 +134,12 @@ public class MainActivity extends AppCompatActivity {
                     //no showing for rectangle and triangle
 
                     hideConstraintView(cons_j_squareRectView);
+                    hideConstraintView(cont_j_triangleView);
                 }
                 else if (position == 3)
                 {
                     //Triangle
+                    cont_j_triangleView.setVisibility(View.VISIBLE);
 
                     //no showing for circle and rectangle
                     hideConstraintView(cons_j_squareRectView);
@@ -196,6 +219,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void textChangeListenerTriangle()
+    {
+        //probably have to change the textWatcher to watch both the height and base
+        //maybe for the sides as well
+        //had to use stack over flow how to use a textwatcher to watch multiple things.
+        TextWatcher triWatcher = new TextWatcher()
+        {
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                setAreaPerimeterTriangle(et_j_base.getText().toString(),et_j_height.getText().toString(),et_j_sideA.getText().toString(),et_j_sideB.getText().toString(),et_j_sideC.getText().toString());
+            }
+        };
+        //call in onCreate
+        //have to attach the text watcher to each one
+        et_j_base.addTextChangedListener(triWatcher);
+        et_j_height.addTextChangedListener(triWatcher);
+        et_j_sideA.addTextChangedListener(triWatcher);
+        et_j_sideB.addTextChangedListener(triWatcher);
+        et_j_sideC.addTextChangedListener(triWatcher);
+
+    }
+
     public void setAreaAndPerimeterSquareRect(String lengthS, String widthS)
     {
 
@@ -229,5 +287,24 @@ public class MainActivity extends AppCompatActivity {
         double perimeter = 2 * pi * radius;
 
         tv_j_areaPerimeterCircle.setText("Area = " + area + "\nPerimeter = " + perimeter);
+    }
+
+    public void setAreaPerimeterTriangle(String baseS, String heightS,String sideAS,String sideBS,String sideCS)
+    {
+        if(baseS.isEmpty() || heightS.isEmpty() || sideAS.isEmpty() || sideBS.isEmpty() || sideCS.isEmpty())
+        {
+            return;
+        }
+        //do what was done for the circle and adjust
+        double base = Double.parseDouble(baseS);
+        double height = Double.parseDouble(heightS);
+        double sideA = Double.parseDouble(sideAS);
+        double sideB = Double.parseDouble(sideBS);
+        double sideC = Double.parseDouble(sideCS);
+
+        double area = 0.5 * base * height;
+        double perimeter = sideA+ sideB + sideC;
+        //same for triangle
+        tv_j_AreaPerimeterTriangle.setText("Area = " + area + "Perimeter = " + perimeter);
     }
 }
